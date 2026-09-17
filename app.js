@@ -187,15 +187,17 @@ async function admin(){
 
 async function loadHomeTripExpenseCount(){
   const el=document.getElementById("tripExpenseCount");
-  if(!el || !window.sb) return;
+  if(!el) return;
+  const client=ensureSupabase();
+  if(!client) return;
   try{
-    const {data,error}=await sb.from("expenses").select("*");
+    const {data,error}=await client.from("expenses").select("amount");
     if(error || !Array.isArray(data)) return;
     const total=data.reduce((sum,row)=>{
-      const value=Number(row.amount ?? row.total_amount ?? row.expense_amount ?? 0);
+      const value=Number(row.amount);
       return sum+(Number.isFinite(value)?value:0);
     },0);
-    el.textContent="₹"+total.toLocaleString("en-IN",{maximumFractionDigits:2});
+    el.textContent=money(total);
   }catch(e){}
 }
 
