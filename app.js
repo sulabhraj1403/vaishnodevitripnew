@@ -42,8 +42,19 @@ function setupBanner(){
 function home(){page("home",`<section class="hero hero-home"><div class="hero-copy"><div class="eyebrow">JAI MATA DI · GROUP TRIP</div><h1>Mata Vaishno Devi<br><span>Mandir, Katra</span></h1><p class="lead">One place for our group's pre-trip records, live expenses, settlement payments and travel inspiration.</p><div class="actions"><a class="btn gold" href="family-expenses.html">Pre Trip Expenses</a><a class="btn primary" href="trip-expenses.html">Trip Expenses</a><a class="btn ghost" href="gallery.html">Explore Gallery</a></div></div><div class="hero-photo"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Mata_Vaishno_Devi_Mandir,_Katra.jpg" alt="Mata Vaishno Devi Mandir, Katra"><div class="photo-credit">Photo: Lpp3535 / Wikimedia Commons</div></div></section><section class="feature-grid"><a class="feature-card image-card" href="gallery.html"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Katra_from_Vaishnodevi.jpg" alt="Katra from Vaishno Devi"><div><span>TRAVEL</span><h3>See Katra & Jammu</h3><p>Temples, mountain views, forts and beautiful scenery.</p></div></a><a class="feature-card image-card" href="local-delicacies.html"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Food_of_Jammu.jpg" alt="Food of Jammu"><div><span>FOOD</span><h3>Taste Jammu</h3><p>Discover Rajma, Kaladi, Dogri dishes and local sweets.</p></div></a><a class="feature-card" href="trip-expenses.html"><div class="feature-icon">₹</div><div><span>LIVE EXPENSES</span><h3>Trip Expenses</h3><p>Shared expenses, payments and family balance sheet.</p></div></a></section><section class="stats-strip"><div><strong>26</strong><span>Members</span></div><div><strong>7</strong><span>Families</span></div><div><strong>1</strong><span>Shared ledger</span></div><div><strong id="tripExpenseCount">₹0</strong><span>Total Trip Expense</span></div></section><section class="card modern-card"><div class="section-head"><div><div class="eyebrow">PLAN · TRACK · SETTLE</div><h2>Everything for the trip</h2></div><a class="text-link" href="admin.html">Open Admin →</a></div><div class="quick-grid"><a href="family-expenses.html"><b>Pre Trip Expenses</b><span>Tickets, hotels and source totals</span></a><a href="trip-expenses.html"><b>Trip Expenses</b><span>Food, other items and balance sheet</span></a><a href="original-tables.html"><b>Detailed Tables</b><span>Original PDF tables</span></a><a href="local-delicacies.html"><b>Local Delicacies</b><span>What to try in Jammu & Katra</span></a></div></section>${setupBanner()}<section class="card source-note"><b>Source figures:</b> Family expense values from the supplied PDF are displayed as source figures and are not recalculated.</section>` ,"Mata Vaishno Devi · Group Trip")
 loadHomeTripExpenseCount();}
 function family(){
- page("family",`<section class="hero"><div><div class="eyebrow">PRE TRIP EXPENSES</div><h1>Choose your family</h1><p>Select a family to see its amounts clearly.</p></div></section><section class="select-card"><label>Select Family<select id="fs"><option value="">-- Select a family --</option>${F.map(f=>`<option value="${f.id}">${f.name}</option>`).join("")}</select></label></section><section id="fr" class="family-result"></section>` ,"Pre Trip Expenses");
- fs.onchange=()=>{const f=F.find(x=>x.id===fs.value);if(!f){fr.classList.remove("show");return}fr.classList.add("show");fr.innerHTML=`<div class="total-box"><div class="label">TOTAL EXPENSE</div><div class="amount">${money(f.total)}</div><div>${f.name} · ${f.members} members</div></div><div class="breakdown"><div class="amount-box"><div class="label">TICKET EXPENSE</div><div class="value">${f.ticket?money(f.ticket):"—"}</div></div><div class="amount-box"><div class="label">HOTEL EXPENSE</div><div class="value">${money(f.hotel)}</div></div></div><div class="card"><h2>In simple words</h2><p>The PDF shows <b>${f.ticket?money(f.ticket):"—"}</b> for tickets, <b>${money(f.hotel)}</b> for hotels and <b>${money(f.total)}</b> as the total expense for <b>${f.name}</b>.</p><p class="muted">The PDF figures are displayed as source figures and are not recalculated.</p></div>`}
+ page("family",`<section class="hero"><div><div class="eyebrow">PRE TRIP EXPENSES</div><h1>Choose your family</h1><p>Select a family to see its pre-trip expense total.</p></div></section><section class="select-card"><label>Select Family<select id="fs"><option value="all">All families</option>${F.map(f=>`<option value="${f.id}">${f.name}</option>`).join("")}</select></label></section><section id="fr" class="family-result"></section>` ,"Pre Trip Expenses");
+ fs.onchange=()=>{
+   const value=fs.value;
+   if(value==="all"){
+     fr.classList.add("show");
+     fr.innerHTML=`<div class="total-box"><div class="label">TOTAL EXPENSE — ALL FAMILIES</div><div class="amount">${money(102091)}</div><div>Combined pre-trip expenses from the supplied PDF</div></div><div class="card"><p class="muted">This is the exact total shown in the supplied PDF. Ticket and hotel amounts are intentionally not separated here.</p></div>`;
+     return;
+   }
+   const f=F.find(x=>x.id===value);
+   if(!f){fr.classList.remove("show");return}
+   fr.classList.add("show");
+   fr.innerHTML=`<div class="total-box"><div class="label">TOTAL EXPENSE</div><div class="amount">${money(f.total)}</div><div>${f.name} · ${f.members} members</div></div><div class="breakdown"><div class="amount-box"><div class="label">TICKET EXPENSE</div><div class="value">${f.ticket?money(f.ticket):"—"}</div></div><div class="amount-box"><div class="label">HOTEL EXPENSE</div><div class="value">${money(f.hotel)}</div></div></div><div class="card"><h2>In simple words</h2><p>The PDF shows <b>${f.ticket?money(f.ticket):"—"}</b> for tickets, <b>${money(f.hotel)}</b> for hotels and <b>${money(f.total)}</b> as the total expense for <b>${f.name}</b>.</p><p class="muted">The PDF figures are displayed as source figures and are not recalculated.</p></div>`;
+ };
 }
 async function trip(){
  page("trip",`<section class="hero"><div><div class="eyebrow">TRIP EXPENSES</div><h1>Trip Expenses</h1><p>Select a family and expense type to see that family's share.</p></div></section><section class="filters card"><label>Family<select id="tf"><option value="all">All families</option>${F.map(f=>`<option value="${f.id}">${f.name}</option>`).join("")}</select></label><label>Type<select id="tt"><option value="all">All</option><option value="Food">Food</option><option value="Other Items">Other Items</option></select></label></section><section id="tr"><div class="card muted">Loading...</div></section>` ,"Trip Expenses");
@@ -188,17 +199,26 @@ async function admin(){
 async function loadHomeTripExpenseCount(){
   const el=document.getElementById("tripExpenseCount");
   if(!el) return;
+  const PRE_TRIP_TOTAL=102091;
   const client=ensureSupabase();
-  if(!client) return;
+  if(!client){
+    el.textContent=money(PRE_TRIP_TOTAL);
+    return;
+  }
   try{
     const {data,error}=await client.from("expenses").select("amount");
-    if(error || !Array.isArray(data)) return;
-    const total=data.reduce((sum,row)=>{
+    if(error || !Array.isArray(data)){
+      el.textContent=money(PRE_TRIP_TOTAL);
+      return;
+    }
+    const tripTotal=data.reduce((sum,row)=>{
       const value=Number(row.amount);
       return sum+(Number.isFinite(value)?value:0);
     },0);
-    el.textContent=money(total);
-  }catch(e){}
+    el.textContent=money(PRE_TRIP_TOTAL+tripTotal);
+  }catch(e){
+    el.textContent=money(PRE_TRIP_TOTAL);
+  }
 }
 
 function gallery(){page("gallery",`<section class="page-hero"><div class="eyebrow">JAMMU · KATRA · VAISHNO DEVI</div><h1>Gallery</h1><p>Scenes from the pilgrimage, Katra and Jammu — temples, hills, forts and city views.</p></section><section class="gallery-grid"><figure class="gallery-item tall"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Mata_Vaishno_Devi_Mandir,_Katra.jpg" alt="Mata Vaishno Devi Mandir, Katra"><figcaption><b>Vaishno Devi Mandir</b><span>Katra</span></figcaption></figure><figure class="gallery-item wide"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Katra_from_Vaishnodevi.jpg" alt="Katra from Vaishno Devi"><figcaption><b>Katra from the hills</b><span>Mountain panorama</span></figcaption></figure><figure class="gallery-item"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Vishno-Devi-Trikuta-Hills-from-Katra.jpg" alt="Trikuta Hills from Katra"><figcaption><b>Trikuta Hills</b><span>View from Katra</span></figcaption></figure><figure class="gallery-item"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Amar_Mahal_Palace,_Jammu.jpg" alt="Amar Mahal Palace Jammu"><figcaption><b>Amar Mahal Palace</b><span>Jammu</span></figcaption></figure><figure class="gallery-item"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Bahu_Fort_01.JPG" alt="Bahu Fort Jammu"><figcaption><b>Bahu Fort</b><span>Jammu</span></figcaption></figure><figure class="gallery-item wide"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/The_Temples_of_Raghunath,_Jammu,_India,_ca.1875-ca.1940_(imp-cswc-GB-237-CSWC47-LS10-011).jpg" alt="Raghunath Temples Jammu"><figcaption><b>Raghunath Temples</b><span>Historic Jammu</span></figcaption></figure></section><section class="card source-note"><b>Image sources:</b> Wikimedia Commons images are linked to their source pages; individual licenses/attribution requirements apply. The gallery includes CC-licensed and public-domain material.</section>`,"Gallery · Vaishno Devi Group Trip")}
@@ -207,7 +227,7 @@ function food(){const foods=[
 {name:"Rajma Chawal",tag:"Jammu classic",desc:"Red kidney beans served with rice. Incredible India lists Rajma Chawal among Jammu's signature foods.",img:"https://commons.wikimedia.org/wiki/Special:FilePath/Food_of_Jammu.jpg"},
 {name:"Kaladi Kulcha",tag:"Street favourite",desc:"Local Kaladi cheese cooked with kulcha; a well-known Jammu-region snack.",img:"https://images.slurrp.com/prod/articles/v3biyhgtvmd.webp?height=675&impolicy=slurrp-20210601&width=1200"},
 {name:"Ambal",tag:"Dogri cuisine",desc:"A traditional Dogri preparation listed among Jammu's regional dishes.",img:"https://commons.wikimedia.org/wiki/Special:FilePath/Food_of_Jammu.jpg"},
-{name:"Khatta Meat",tag:"Dogri speciality",desc:"A tangy meat preparation included in Jammu's traditional food lists.",img:"https://commons.wikimedia.org/wiki/Special:FilePath/Food_of_Jammu.jpg"},
+
 {name:"Kulthein di Dal",tag:"Traditional",desc:"A Dogri lentil preparation highlighted by Jammu tourism sources.",img:"https://commons.wikimedia.org/wiki/Special:FilePath/Food_of_Jammu.jpg"},
 {name:"Kashmiri Aloo Dum",tag:"Classic",desc:"Spiced potato dish listed among the region's popular traditional dishes.",img:"https://commons.wikimedia.org/wiki/Special:FilePath/Food_of_Jammu.jpg"},
 {name:"Patisa",tag:"Sweet",desc:"A flaky, ghee-rich sweet that JKTDC identifies as a prominent Jammu speciality.",img:"https://commons.wikimedia.org/wiki/Special:FilePath/Food_of_Jammu.jpg"},
